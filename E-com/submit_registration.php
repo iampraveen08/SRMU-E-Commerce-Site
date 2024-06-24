@@ -1,31 +1,27 @@
 <?php
 require 'db_config.php';
+session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $email = $_POST['email'];
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
-
-    if ($password != $confirm_password) {
-        echo "Passwords do not match.";
-        exit;
-    }
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
     $pdo = getDBConnection();
-    $stmt = $pdo->prepare('SELECT id FROM users WHERE username = ?');
-    $stmt->execute([$username]);
-    $existingUser = $stmt->fetch();
 
-    if ($existingUser) {
-        echo "Username already exists.";
-    } else {
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare('INSERT INTO users (username, email, password) VALUES (?, ?, ?)');
-        if ($stmt->execute([$username, $email, $hashedPassword])) {
-            echo "Registration successful!";
+    $stmt = $pdo->prepare('INSERT INTO users (username, email, password) VALUES (?, ?, ?)');
+    try {
+        $stmt->execute([$username, $email, $password]);
+        
+        $_SESSION['user_id'] = $pdo->lastInsertId();
+        $_SESSION['username'] = $username;
+        
+        echo "User registered successfully!";
+    } catch (PDOException $e) {
+        if ($e->getCode() == 23000) {
+            echo "Username or email already exists!";
         } else {
-            echo "Registration failed. Please try again.";
+            echo "Error: " . $e->getMessage();
         }
     }
 }

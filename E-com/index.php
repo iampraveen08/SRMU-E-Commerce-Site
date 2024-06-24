@@ -68,6 +68,10 @@
             font-size: 1em;
         }
 
+        .input-group input[type="checkbox"] {
+            width: auto;
+        }
+
         button {
             width: 100%;
             padding: 10px;
@@ -118,6 +122,10 @@
                 <div class="input-group">
                     <label for="login-password">Password</label>
                     <input type="password" id="login-password" name="password" required>
+                </div>
+                <div class="input-group">
+                    <input type="checkbox" id="remember-me" name="remember_me">
+                    <label for="remember-me">Remember Me</label>
                 </div>
                 <button type="submit">Login</button>
             </form>

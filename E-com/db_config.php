@@ -1,9 +1,9 @@
 <?php
 function getDBConnection() {
-    $host = 'mysql';
+    $host = 'localhost';
     $db   = 'mydatabase';
     $user = 'root';
-    $pass = 'password';
+    $pass = '';
     $charset = 'utf8mb4';
 
     $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
